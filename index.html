@@ -2,6 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>構成一覧</title>
 <style>
@@ -125,9 +128,9 @@ button {
   <div class="nav">
     <button class="nav-btn" onclick="triggerImport()">インポート</button>
     <button class="nav-btn" onclick="exportAllTeams()">一括エクスポート</button>
-    <a href="champion.html">チャンピオン登録</a>
-    <a href="team-builder.html">新規構成</a>
-    <a href="index.html">構成一覧</a>
+    <a href="champion.html?v=53">チャンピオン登録</a>
+    <a href="team-builder.html?v=53">新規構成</a>
+    <a href="index.html?v=53">構成一覧</a>
   </div>
 </div>
 
@@ -158,7 +161,7 @@ async function copyShareUrl(teamId) {
 
   const payload = buildSharePayload(team, champions);
   const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
-  const url = new URL("team-builder.html", window.location.href);
+  const url = new URL("team-builder.html?v=53", window.location.href);
   url.searchParams.set("share", encoded);
 
   try {
@@ -373,7 +376,7 @@ async function loadTeams() {
 
 function editTeam(id) {
   sessionStorage.setItem("editingTeamId", id);
-  location.href = "team-edit.html";
+  location.href = "team-edit.html?v=53";
 }
 
 async function deleteTeam(id) {
@@ -406,7 +409,7 @@ async function copyShareUrl(teamId) {
 
   const payload = buildSharePayload(team, champions);
   const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
-  const url = new URL("team-builder.html", window.location.href);
+  const url = new URL("team-builder.html?v=53", window.location.href);
   url.searchParams.set("share", encoded);
 
   try {
