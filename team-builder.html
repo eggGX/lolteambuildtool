@@ -863,12 +863,7 @@ async function saveTeam() {
 }
 
 function exportImage() {
-  html2canvas(document.getElementById("capture")).then(canvas => {
-    const link = document.createElement("a");
-    link.download = "team.png";
-    link.href = canvas.toDataURL();
-    link.click();
-  });
+  generateExportImage();
 }
 
 async function loadEditingTeam() {
