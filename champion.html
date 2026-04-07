@@ -433,7 +433,7 @@ async function ensureInitialChampionSeed() {
 
 async function initChampionPage() {
   await ensureInitialChampionSeed();
-  await renderList();
+  await loadChampions();
 }
 
 let allChampions = [];
