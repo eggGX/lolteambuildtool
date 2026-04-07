@@ -719,6 +719,89 @@ body {
   }
 }
 
+
+@media (max-width: 900px) {
+  .main {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .right {
+    order: -1 !important;
+  }
+
+  .top-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .action-button {
+    width: 100% !important;
+  }
+
+  .meta-summary {
+    margin-bottom: 12px !important;
+  }
+
+  .search-box,
+  .tag-filters,
+  .champion-list-scroll,
+  .champion-list,
+  .right h2 {
+    display: none !important;
+  }
+
+  .lane {
+    cursor: pointer !important;
+  }
+
+  .alt-btn {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 22px !important;
+  }
+
+  .mobile-picker-modal {
+    width: min(680px, 100%) !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+
+  .mobile-picker-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .mobile-picker-header h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .mobile-picker-actions {
+    margin-bottom: 12px;
+  }
+
+  .mobile-picker-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .mobile-picker-list .champion {
+    display: block !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .top-actions {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -825,6 +908,10 @@ let altModeLane = null;
 function handleAltButtonClick(event, lane) {
   event.preventDefault();
   event.stopPropagation();
+  if (isMobileLayout()) {
+    openMobileChampionPicker("alt", lane);
+    return;
+  }
   selectAltMode(lane);
 }
 
@@ -859,6 +946,10 @@ let altPicks = {};
 document.querySelectorAll(".lane").forEach(el => {
   el.onclick = (event) => {
     if (event.target.closest(".alt-btn")) return;
+    if (isMobileLayout()) {
+      openMobileChampionPicker("main", el.dataset.lane);
+      return;
+    }
     clearAltMode();
     document.querySelectorAll(".lane").forEach(l => l.classList.remove("selected"));
     el.classList.add("selected");
@@ -880,6 +971,10 @@ document.querySelectorAll(".lane").forEach(el => {
 
 function toggleBanMode() {
   clearAltMode();
+  if (isMobileLayout()) {
+    openMobileChampionPicker("ban", "ban");
+    return;
+  }
   isBanMode = !isBanMode;
   document.getElementById("capture").classList.toggle("hidden", isBanMode);
   document.getElementById("banPanel").classList.toggle("hidden", !isBanMode);
@@ -974,6 +1069,12 @@ function updateMobileModeStatus() {
   let text = "通常選択モード";
   if (isBanMode) {
     text = "BAN設定中";
+  } else if (mobilePickerMode === "main" && mobilePickerLane && isMobileLayout()) {
+    text = `選択中：${mobilePickerLane.toUpperCase()}`;
+  } else if (mobilePickerMode === "alt" && mobilePickerLane && isMobileLayout()) {
+    text = `代用選択中：${mobilePickerLane.toUpperCase()}`;
+  } else if (mobilePickerMode === "ban" && isMobileLayout()) {
+    text = "BAN設定中";
   } else if (altModeLane) {
     text = `代用選択中：${altModeLane.toUpperCase()}`;
   } else if (selectedLane) {
@@ -985,6 +1086,128 @@ function updateMobileModeStatus() {
 
 function isMobileLayout() {
   return window.innerWidth <= 900;
+}
+
+
+let mobilePickerMode = null;
+let mobilePickerLane = null;
+let mobilePickerTagFilter = "";
+
+function openMobileChampionPicker(mode, lane) {
+  if (!isMobileLayout()) return;
+  mobilePickerMode = mode;
+  mobilePickerLane = lane;
+  mobilePickerTagFilter = "";
+  const search = document.getElementById("mobilePickerSearch");
+  if (search) search.value = "";
+
+  const title = document.getElementById("mobilePickerTitle");
+  if (title) {
+    if (mode === "main") title.textContent = `${lane.toUpperCase()} のチャンピオン選択`;
+    else if (mode === "alt") title.textContent = `${lane.toUpperCase()} の代用チャンピオン選択`;
+    else if (mode === "ban") title.textContent = `BANチャンピオン選択`;
+  }
+
+  document.querySelectorAll("[data-mobile-tag]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.mobileTag === "");
+  });
+
+  renderMobilePickerList();
+  document.getElementById("mobilePickerModal").classList.add("open");
+}
+
+function closeMobileChampionPicker() {
+  document.getElementById("mobilePickerModal").classList.remove("open");
+  mobilePickerMode = null;
+  mobilePickerLane = null;
+}
+
+function setMobilePickerTagFilter(tag) {
+  mobilePickerTagFilter = tag;
+  document.querySelectorAll("[data-mobile-tag]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.mobileTag === tag);
+  });
+  renderMobilePickerList();
+}
+
+function clearMobilePickerSelection() {
+  if (!mobilePickerMode) return;
+
+  if (mobilePickerMode === "main" && mobilePickerLane) {
+    delete team[mobilePickerLane];
+    renderTeam();
+  } else if (mobilePickerMode === "alt" && mobilePickerLane) {
+    altPicks[mobilePickerLane] = [];
+    renderAlt();
+  } else if (mobilePickerMode === "ban") {
+    bannedChampionIds = [];
+    renderBanSlots();
+  }
+  closeMobileChampionPicker();
+}
+
+function renderMobilePickerList() {
+  const list = document.getElementById("mobilePickerList");
+  if (!list) return;
+  const keyword = (document.getElementById("mobilePickerSearch")?.value || "").trim().toLowerCase();
+  list.innerHTML = "";
+
+  const filtered = champions
+    .filter(c => c.name.toLowerCase().includes(keyword))
+    .filter(c => {
+      if (!mobilePickerTagFilter) return true;
+      return Array.isArray(c.tags) && c.tags.includes(mobilePickerTagFilter);
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, "ja"));
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">該当するチャンピオンがありません。</div>';
+    return;
+  }
+
+  filtered.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "champion";
+    div.innerHTML = `<img src="${c.image}" alt=""><div>${c.name}</div>`;
+
+    if (mobilePickerMode === "ban" && bannedChampionIds.includes(c.id)) {
+      div.style.outline = "2px solid #d4af37";
+    }
+    if (mobilePickerMode === "main" && mobilePickerLane && team[mobilePickerLane] === c.id) {
+      div.style.outline = "2px solid #d4af37";
+    }
+    if (mobilePickerMode === "alt" && mobilePickerLane && (altPicks[mobilePickerLane] || []).includes(c.id)) {
+      div.style.outline = "2px solid #d4af37";
+    }
+
+    div.onclick = () => {
+      if (mobilePickerMode === "main" && mobilePickerLane) {
+        team[mobilePickerLane] = c.id;
+        renderTeam();
+        closeMobileChampionPicker();
+      } else if (mobilePickerMode === "alt" && mobilePickerLane) {
+        altPicks[mobilePickerLane] = altPicks[mobilePickerLane] || [];
+        if (altPicks[mobilePickerLane].includes(c.id)) {
+          altPicks[mobilePickerLane] = altPicks[mobilePickerLane].filter(id => id !== c.id);
+        } else if (altPicks[mobilePickerLane].length < 3) {
+          altPicks[mobilePickerLane].push(c.id);
+        }
+        renderAlt();
+        closeMobileChampionPicker();
+      } else if (mobilePickerMode === "ban") {
+        if (bannedChampionIds.includes(c.id)) {
+          bannedChampionIds = bannedChampionIds.filter(id => id !== c.id);
+        } else if (bannedChampionIds.length < 10) {
+          bannedChampionIds.push(c.id);
+        }
+        renderBanSlots();
+        closeMobileChampionPicker();
+      }
+      updateMobileModeStatus();
+    };
+
+    list.appendChild(div);
+  });
 }
 
 function openMetaModal() {
@@ -1425,6 +1648,29 @@ function generateExportImage() {
         justify-content:center;
       "></div>
     </div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="mobilePickerModal">
+  <div class="modal mobile-picker-modal">
+    <div class="mobile-picker-header">
+      <h2 id="mobilePickerTitle">チャンピオン選択</h2>
+      <button type="button" class="cancel-btn" onclick="closeMobileChampionPicker()">閉じる</button>
+    </div>
+    <input id="mobilePickerSearch" class="search-box" placeholder="チャンピオン名で検索" oninput="renderMobilePickerList()">
+    <div class="tag-filters mobile-picker-tags">
+      <button class="tag-filter active" data-mobile-tag="" onclick="setMobilePickerTagFilter('')">すべて</button>
+      <button class="tag-filter" data-mobile-tag="TOP" onclick="setMobilePickerTagFilter('TOP')">TOP</button>
+      <button class="tag-filter" data-mobile-tag="JG" onclick="setMobilePickerTagFilter('JG')">JG</button>
+      <button class="tag-filter" data-mobile-tag="MID" onclick="setMobilePickerTagFilter('MID')">MID</button>
+      <button class="tag-filter" data-mobile-tag="ADC" onclick="setMobilePickerTagFilter('ADC')">ADC</button>
+      <button class="tag-filter" data-mobile-tag="SUP" onclick="setMobilePickerTagFilter('SUP')">SUP</button>
+    </div>
+    <div class="mobile-picker-actions">
+      <button type="button" class="action-button secondary" onclick="clearMobilePickerSelection()">この枠をクリア</button>
+    </div>
+    <div class="champion-list mobile-picker-list" id="mobilePickerList"></div>
   </div>
 </div>
 
