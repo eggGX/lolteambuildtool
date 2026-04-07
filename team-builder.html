@@ -350,6 +350,26 @@ body {
   color: #e5e7eb;
   border: 1px solid #334155;
 }
+
+.export-preview-modal {
+  width: min(1000px, 96vw);
+}
+.export-preview-wrap {
+  margin-top: 12px;
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #0b1220;
+  padding: 12px;
+}
+#exportPreviewImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
 </style>
 </head>
 <body>
@@ -968,6 +988,25 @@ function buildExportBanCard(src) {
   return box;
 }
 
+let exportPreviewBlob = null;
+let exportPreviewFileName = "チーム構成.png";
+
+function closeExportPreview() {
+  document.getElementById("exportPreviewModal").classList.remove("open");
+}
+
+function downloadExportPreview() {
+  if (!exportPreviewBlob) {
+    alert("出力画像がありません");
+    return;
+  }
+  const link = document.createElement("a");
+  link.download = exportPreviewFileName;
+  link.href = URL.createObjectURL(exportPreviewBlob);
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
 function generateExportImage() {
   const exportArea = document.getElementById("exportArea");
   const exportMain = document.getElementById("exportMain");
@@ -981,6 +1020,7 @@ function generateExportImage() {
 
   const teamName = (document.getElementById("teamName")?.value || "").trim();
   exportNameBar.textContent = teamName || "構成";
+  exportPreviewFileName = teamName ? `${teamName}.png` : "チーム構成.png";
 
   const laneLabels = {
     top: "TOP",
@@ -1026,12 +1066,14 @@ function generateExportImage() {
         alert("画像出力に失敗しました");
         return;
       }
-      const link = document.createElement("a");
-      const safeName = teamName ? `${teamName}.png` : "チーム構成.png";
-      link.download = safeName;
-      link.href = URL.createObjectURL(blob);
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+      exportPreviewBlob = blob;
+      const previewUrl = URL.createObjectURL(blob);
+      const img = document.getElementById("exportPreviewImage");
+      img.onload = () => {
+        URL.revokeObjectURL(previewUrl);
+      };
+      img.src = previewUrl;
+      document.getElementById("exportPreviewModal").classList.add("open");
     }, "image/png");
   }).catch((err) => {
     console.error(err);
@@ -1095,6 +1137,20 @@ function generateExportImage() {
         gap:10px;
         justify-content:center;
       "></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="exportPreviewModal">
+  <div class="modal export-preview-modal">
+    <h2>画像出力プレビュー</h2>
+    <div class="export-preview-wrap">
+      <img id="exportPreviewImage" alt="export preview">
+    </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeExportPreview()">閉じる</button>
+      <button class="save-btn" onclick="downloadExportPreview()">DL</button>
     </div>
   </div>
 </div>
