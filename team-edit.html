@@ -530,13 +530,23 @@ function renderBanSlots() {
     return;
   }
 
-  ids.forEach(id => {
+  ids.forEach((id, index) => {
     const champ = champions.find(c => c.id === id);
     const slot = document.createElement("div");
     slot.className = "ban-slot";
 
     if (champ) {
-      slot.innerHTML = `<img src="${champ.image}" alt="">`;
+      const img = document.createElement("img");
+      img.src = champ.image;
+      img.alt = "";
+      img.title = champ.name;
+      img.style.cursor = "pointer";
+      img.onclick = (event) => {
+        event.stopPropagation();
+        bannedChampionIds = bannedChampionIds.filter((_, i) => i !== index);
+        renderBanSlots();
+      };
+      slot.appendChild(img);
     } else {
       slot.classList.add("empty-slot");
       slot.textContent = "不明";
