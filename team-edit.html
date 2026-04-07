@@ -348,6 +348,131 @@ body {
   color: #e5e7eb;
   border: 1px solid #334155;
 }
+
+.mobile-mode-status {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile-mode-status {
+    display: block;
+    margin: 0 0 12px 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #111827;
+    border: 1px solid #334155;
+    color: #f8fafc;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .left {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .left > .panel-view {
+    grid-column: 1 / -1;
+  }
+
+  #capture.panel-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  #capture .lane[data-lane="sup"] {
+    grid-column: 1 / -1;
+  }
+
+  .lane {
+    height: 165px !important;
+    min-height: 165px !important;
+    max-height: 165px !important;
+    flex: none !important;
+  }
+
+  .lane[data-lane="sup"] {
+    width: 100%;
+  }
+
+  .alt-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    right: 8px;
+    bottom: 8px;
+  }
+
+  .champion-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px;
+  }
+
+  .champion {
+    padding: 8px;
+  }
+
+  .champion img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .top-actions {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #0f172a;
+    padding-bottom: 8px;
+  }
+
+  .meta-summary {
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  /* Mobile-only BAN modal behavior */
+  #banPanel {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    top: auto;
+    max-height: 55vh;
+    overflow-y: auto;
+    z-index: 30;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+  }
+
+  #banPanel.hidden {
+    display: none !important;
+  }
+
+  .ban-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .ban-slot {
+    min-height: 140px;
+  }
+}
+
+@media (max-width: 560px) {
+  .lane {
+    height: 150px !important;
+    min-height: 150px !important;
+    max-height: 150px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -403,6 +528,7 @@ body {
         <button class="action-button secondary" onclick="generateExportImage()">画像出力</button>
         <button class="action-button secondary" onclick="toggleBanMode()">BAN設定</button>
       </div>
+      <div id="mobileModeStatus" class="mobile-mode-status">通常選択モード</div>
 
       <div class="meta-summary">
         <div><strong>構成名:</strong> <span id="teamNamePreview">未設定</span></div>
@@ -459,6 +585,7 @@ function handleAltButtonClick(event, lane) {
 function selectAltMode(lane){
   altModeLane = (altModeLane === lane ? null : lane);
   refreshAltButtons();
+  updateMobileModeStatus();
 }
 
 
@@ -472,6 +599,7 @@ function refreshAltButtons() {
 function clearAltMode() {
   altModeLane = null;
   refreshAltButtons();
+  updateMobileModeStatus();
 }
 
 
@@ -489,6 +617,7 @@ document.querySelectorAll(".lane").forEach(el => {
     document.querySelectorAll(".lane").forEach(l => l.classList.remove("selected"));
     el.classList.add("selected");
     selectedLane = el.dataset.lane;
+    updateMobileModeStatus();
   };
 
   el.ondragover = (e) => e.preventDefault();
@@ -509,6 +638,7 @@ function toggleBanMode() {
   document.getElementById("capture").classList.toggle("hidden", isBanMode);
   document.getElementById("banPanel").classList.toggle("hidden", !isBanMode);
   renderBanSlots();
+  updateMobileModeStatus();
 }
 
 function renderBanSlots() {
@@ -587,15 +717,39 @@ function resetTeamBuilderState() {
   renderBanSlots();
   refreshAltButtons();
   renderChampionList();
+  updateMobileModeStatus();
+}
+
+
+function updateMobileModeStatus() {
+  const el = document.getElementById("mobileModeStatus");
+  if (!el) return;
+
+  let text = "通常選択モード";
+  if (isBanMode) {
+    text = "BAN設定中";
+  } else if (altModeLane) {
+    text = `代用選択中：${altModeLane.toUpperCase()}`;
+  } else if (selectedLane) {
+    text = `選択中：${selectedLane.toUpperCase()}`;
+  }
+
+  el.textContent = text;
+}
+
+function isMobileLayout() {
+  return window.innerWidth <= 900;
 }
 
 function openMetaModal() {
   clearAltMode();
   document.getElementById("metaModal").classList.add("open");
+  updateMobileModeStatus();
 }
 
 function closeMetaModal() {
   document.getElementById("metaModal").classList.remove("open");
+  updateMobileModeStatus();
 }
 
 function applyMeta() {
@@ -799,6 +953,7 @@ async function loadEditingTeam() {
   renderAlt();
   renderBanSlots();
   refreshAltButtons();
+  updateMobileModeStatus();
 })();
 
 
