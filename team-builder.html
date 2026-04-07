@@ -353,352 +353,15 @@ body {
   display: none;
 }
 
-@media (max-width: 900px) {
-  .mobile-mode-status {
-    display: block;
-    margin: 0 0 12px 0;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: #111827;
-    border: 1px solid #334155;
-    color: #f8fafc;
-    font-weight: 600;
-    font-size: 14px;
-  }
 
-  .left {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    align-items: start;
-  }
 
-  .left > .panel-view {
-    grid-column: 1 / -1;
-  }
 
-  #capture.panel-view {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  #capture .lane[data-lane="sup"] {
-    grid-column: 1 / -1;
-  }
-
-  .lane {
-    height: 165px !important;
-    min-height: 165px !important;
-    max-height: 165px !important;
-    flex: none !important;
-  }
-
-  .lane[data-lane="sup"] {
-    width: 100%;
-  }
-
-  .alt-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
-    right: 8px;
-    bottom: 8px;
-  }
-
-  .champion-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px;
-  }
-
-  .champion {
-    padding: 8px;
-  }
-
-  .champion img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-  }
-
-  .top-actions {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: #0f172a;
-    padding-bottom: 8px;
-  }
-
-  .meta-summary {
-    margin-top: 0;
-    margin-bottom: 12px;
-  }
-
-  /* Mobile-only BAN modal behavior */
-  #banPanel {
-    position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
-    top: auto;
-    max-height: 55vh;
-    overflow-y: auto;
-    z-index: 30;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 16px;
-    padding: 14px;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.45);
-  }
-
-  #banPanel.hidden {
-    display: none !important;
-  }
-
-  .ban-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .ban-slot {
-    min-height: 140px;
-  }
-}
-
-@media (max-width: 560px) {
-  .lane {
-    height: 150px !important;
-    min-height: 150px !important;
-    max-height: 150px !important;
-  }
 }
 
 
-@media (max-width: 900px) {
-  body {
-    height: auto !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-  }
 
-  .page {
-    height: auto !important;
-    min-height: 100vh !important;
-    overflow: visible !important;
-  }
 
-  .header {
-    padding: 14px !important;
-    align-items: flex-start !important;
-  }
 
-  .header h1 {
-    font-size: 32px !important;
-    margin-bottom: 4px !important;
-  }
-
-  .nav {
-    width: 100% !important;
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 8px !important;
-  }
-
-  .nav a {
-    width: 100% !important;
-    min-width: 0 !important;
-    text-align: center !important;
-    padding: 10px 12px !important;
-    font-size: 14px !important;
-  }
-
-  .main {
-    display: flex !important;
-    flex-direction: column !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  .left,
-  .right {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    height: auto !important;
-    flex: none !important;
-    overflow: visible !important;
-    padding: 14px !important;
-    border-right: none !important;
-  }
-
-  .left {
-    border-bottom: 1px solid #334155 !important;
-  }
-
-  .right {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-
-  #capture.panel-view {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px !important;
-    min-height: 0 !important;
-    height: auto !important;
-  }
-
-  #capture .lane[data-lane="sup"] {
-    grid-column: 1 / -1 !important;
-  }
-
-  .lane {
-    width: 100% !important;
-    height: 170px !important;
-    min-height: 170px !important;
-    max-height: 170px !important;
-    flex: none !important;
-    padding: 8px 42px 8px 10px !important;
-    gap: 8px !important;
-  }
-
-  .lane-main {
-    height: 100% !important;
-  }
-
-  .lane img {
-    height: 100% !important;
-    width: auto !important;
-    max-width: calc(100% - 60px) !important;
-    object-fit: contain !important;
-  }
-
-  .alt-area {
-    width: 46px !important;
-    height: 100% !important;
-  }
-
-  .alt-btn {
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 20px !important;
-    right: 8px !important;
-    bottom: 8px !important;
-  }
-
-  .top-actions {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 8px !important;
-    position: static !important;
-    top: auto !important;
-    z-index: auto !important;
-    background: transparent !important;
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-  }
-
-  .action-button {
-    width: 100% !important;
-    min-width: 0 !important;
-    padding: 11px 10px !important;
-    font-size: 14px !important;
-  }
-
-  .mobile-mode-status {
-    display: block !important;
-    margin: 0 !important;
-    padding: 10px 12px !important;
-    border-radius: 10px !important;
-    background: #111827 !important;
-    border: 1px solid #334155 !important;
-    color: #f8fafc !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
-  }
-
-  .meta-summary {
-    margin: 0 !important;
-    padding: 12px !important;
-  }
-
-  .search-box {
-    margin: 0 !important;
-  }
-
-  .tag-filters {
-    margin: 0 !important;
-    gap: 6px !important;
-  }
-
-  .tag-filter {
-    padding: 8px 10px !important;
-    font-size: 13px !important;
-  }
-
-  .champion-list-scroll {
-    overflow: visible !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    padding-right: 0 !important;
-  }
-
-  .champion-list {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-  }
-
-  .champion {
-    padding: 8px !important;
-  }
-
-  .champion img {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 1 / 1 !important;
-  }
-
-  #banPanel {
-    position: fixed !important;
-    left: 12px !important;
-    right: 12px !important;
-    bottom: 12px !important;
-    max-height: 55vh !important;
-    overflow-y: auto !important;
-    z-index: 50 !important;
-    background: #0f172a !important;
-    border: 1px solid #334155 !important;
-    border-radius: 16px !important;
-    padding: 14px !important;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.45) !important;
-  }
-
-  #banPanel.hidden {
-    display: none !important;
-  }
-
-  .ban-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px !important;
-  }
-
-  .ban-slot {
-    min-height: 140px !important;
-  }
-
-  .modal {
-    width: 100% !important;
-    max-height: 78vh !important;
-    overflow-y: auto !important;
-  }
-}
-
-@media (max-width: 560px) {
-  .header h1 {
-    font-size: 28px !important;
-  }
 
   #capture.panel-view {
     grid-template-columns: 1fr !important;
@@ -720,169 +383,24 @@ body {
 }
 
 
-@media (max-width: 900px) {
-  .main {
-    display: flex !important;
-    flex-direction: column !important;
-  }
 
-  .right {
-    order: -1 !important;
-  }
 
-  .top-actions {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 8px !important;
-  }
 
-  .action-button {
-    width: 100% !important;
-  }
-
-  .meta-summary {
-    margin-bottom: 12px !important;
-  }
-
-  .search-box,
-  .tag-filters,
-  .champion-list-scroll,
-  .champion-list,
-  .right h2 {
-    display: none !important;
-  }
-
-  .lane {
-    cursor: pointer !important;
-  }
-
-  .alt-btn {
-    width: 40px !important;
-    height: 40px !important;
-    font-size: 22px !important;
-  }
-
-  .mobile-picker-modal {
-    width: min(560px, calc(100vw - 24px)) !important;
-    max-height: 78vh !important;
-    overflow-y: auto !important;
-  }
-
-  .mobile-picker-header {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .mobile-picker-header h2 {
-    margin: 0;
-    font-size: 20px;
-  }
-
-  .mobile-picker-actions {
-    margin-bottom: 12px;
-  }
-
-  .mobile-picker-list {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-  }
-
-  .mobile-picker-list .champion {
-    display: block !important;
-  }
-}
-
-@media (max-width: 560px) {
-  .top-actions {
-    grid-template-columns: 1fr !important;
-  }
 }
 
 
-@media (max-width: 900px) {
-  .mobile-picker-modal {
-    padding: 14px !important;
-  }
-  .mobile-picker-header {
-    position: sticky;
-    top: 0;
-    background: #111827;
-    z-index: 2;
-    padding-bottom: 8px;
-  }
-  .mobile-picker-tags {
-    margin-bottom: 10px !important;
-  }
-  .mobile-picker-list {
-    max-height: 48vh;
-    overflow-y: auto;
-    align-content: start;
-    padding-right: 4px;
-  }
-  #banPanel {
-    display: none !important;
-  }
-  .alt-area {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  .alt-area img,
-  .alt-slot-empty {
-    display: block !important;
-  }
-  .lane {
-    overflow: hidden !important;
-  }
-}
 
 
-.mobile-picker-toolbar {
-  display: grid;
-  grid-template-columns: 1fr 140px;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-.mobile-picker-sort {
-  width: 100%;
-  padding: 10px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: white;
-  border-radius: 8px;
-}
+
+
+
 .alt-area img {
   width: 100%;
   object-fit: cover;
   border-radius: 8px;
 }
-@media (max-width: 900px) {
-  .alt-area {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 52px !important;
-    min-width: 52px !important;
-    z-index: 2;
-  }
-  .alt-area img,
-  .alt-slot-empty {
-    display: block !important;
-    width: 100% !important;
-    height: calc((100% - 8px) / 3) !important;
-  }
-  .lane-main {
-    overflow: hidden;
-  }
-}
-@media (max-width: 560px) {
-  .mobile-picker-toolbar {
-    grid-template-columns: 1fr;
-  }
+
+
 }
 
 </style>
@@ -992,10 +510,8 @@ let altModeLane = null;
 function handleAltButtonClick(event, lane) {
   event.preventDefault();
   event.stopPropagation();
-  if (isMobileLayout()) {
-    openMobileChampionPicker("alt", lane);
-    return;
-  }
+  selectAltMode(lane);
+}
   selectAltMode(lane);
 }
 
@@ -1030,11 +546,6 @@ let altPicks = {};
 document.querySelectorAll(".lane").forEach(el => {
   el.onclick = (event) => {
     if (event.target.closest(".alt-btn")) return;
-    if (isMobileLayout()) {
-      openMobileChampionPicker("main", el.dataset.lane);
-      updateMobileModeStatus();
-      return;
-    }
     clearAltMode();
     document.querySelectorAll(".lane").forEach(l => l.classList.remove("selected"));
     el.classList.add("selected");
@@ -1056,10 +567,12 @@ document.querySelectorAll(".lane").forEach(el => {
 
 function toggleBanMode() {
   clearAltMode();
-  if (isMobileLayout()) {
-    openMobileChampionPicker("ban", "ban");
-    return;
-  }
+  isBanMode = !isBanMode;
+  document.getElementById("capture").classList.toggle("hidden", isBanMode);
+  document.getElementById("banPanel").classList.toggle("hidden", !isBanMode);
+  renderBanSlots();
+  updateMobileModeStatus();
+}
   isBanMode = !isBanMode;
   document.getElementById("capture").classList.toggle("hidden", isBanMode);
   document.getElementById("banPanel").classList.toggle("hidden", !isBanMode);
@@ -1267,13 +780,7 @@ function openMobileChampionPicker(mode, lane) {
     else if (mode === "ban") title.textContent = `BANチャンピオン選択`;
   }
 
-  const clearBtn = document.querySelector(".mobile-picker-actions .action-button.secondary");
-  const doneBtn = document.getElementById("mobilePickerDone");
-  if (clearBtn) {
-    if (mode === "ban") clearBtn.textContent = "BANを全クリア";
-    else if (mode === "alt") clearBtn.textContent = "代用をクリア";
-    else clearBtn.textContent = "この枠をクリア";
-  }
+  const clearBtn = document.querySelector("
   if (doneBtn) {
     doneBtn.style.display = mode === "ban" ? "inline-flex" : "none";
   }
@@ -1825,35 +1332,6 @@ function generateExportImage() {
   </div>
 </div>
 
-
-<div class="modal-backdrop" id="mobilePickerModal">
-  <div class="modal mobile-picker-modal">
-    <div class="mobile-picker-header">
-      <h2 id="mobilePickerTitle">チャンピオン選択</h2>
-      <button type="button" class="cancel-btn" onclick="closeMobileChampionPicker()">閉じる</button>
-    </div>
-    <div class="mobile-picker-toolbar">
-      <input id="mobilePickerSearch" class="search-box" placeholder="チャンピオン名で検索" oninput="renderMobilePickerList()">
-      <select id="mobilePickerSort" class="mobile-picker-sort" onchange="renderMobilePickerList()">
-        <option value="nameAsc">名前昇順</option>
-        <option value="nameDesc">名前降順</option>
-      </select>
-    </div>
-    <div class="tag-filters mobile-picker-tags">
-      <button class="tag-filter active" data-mobile-tag="" onclick="setMobilePickerTagFilter('')">すべて</button>
-      <button class="tag-filter" data-mobile-tag="TOP" onclick="setMobilePickerTagFilter('TOP')">TOP</button>
-      <button class="tag-filter" data-mobile-tag="JG" onclick="setMobilePickerTagFilter('JG')">JG</button>
-      <button class="tag-filter" data-mobile-tag="MID" onclick="setMobilePickerTagFilter('MID')">MID</button>
-      <button class="tag-filter" data-mobile-tag="ADC" onclick="setMobilePickerTagFilter('ADC')">ADC</button>
-      <button class="tag-filter" data-mobile-tag="SUP" onclick="setMobilePickerTagFilter('SUP')">SUP</button>
-    </div>
-    <div class="mobile-picker-actions">
-      <button type="button" class="action-button secondary" onclick="clearMobilePickerSelection()">この選択をクリア</button>
-      <button type="button" id="mobilePickerDone" class="action-button" onclick="closeMobileChampionPicker()" style="display:none;">完了</button>
-    </div>
-    <div class="champion-list mobile-picker-list" id="mobilePickerList"></div>
-  </div>
-</div>
 
 </body>
 </html>
