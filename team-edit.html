@@ -840,6 +840,51 @@ body {
   }
 }
 
+
+.mobile-picker-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.mobile-picker-sort {
+  width: 100%;
+  padding: 10px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: white;
+  border-radius: 8px;
+}
+.alt-area img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+@media (max-width: 900px) {
+  .alt-area {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 52px !important;
+    min-width: 52px !important;
+    z-index: 2;
+  }
+  .alt-area img,
+  .alt-slot-empty {
+    display: block !important;
+    width: 100% !important;
+    height: calc((100% - 8px) / 3) !important;
+  }
+  .lane-main {
+    overflow: hidden;
+  }
+}
+@media (max-width: 560px) {
+  .mobile-picker-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1132,14 +1177,22 @@ function isMobileLayout() {
 let mobilePickerMode = null;
 let mobilePickerLane = null;
 let mobilePickerTagFilter = "";
+let mobileBanTempIds = [];
 
 function openMobileChampionPicker(mode, lane) {
   if (!isMobileLayout()) return;
   mobilePickerMode = mode;
   mobilePickerLane = lane;
   mobilePickerTagFilter = "";
+
   const search = document.getElementById("mobilePickerSearch");
   if (search) search.value = "";
+  const sort = document.getElementById("mobilePickerSort");
+  if (sort) sort.value = "nameAsc";
+
+  if (mode === "ban") {
+    mobileBanTempIds = [...bannedChampionIds];
+  }
 
   const title = document.getElementById("mobilePickerTitle");
   if (title) {
@@ -1148,11 +1201,15 @@ function openMobileChampionPicker(mode, lane) {
     else if (mode === "ban") title.textContent = `BANチャンピオン選択`;
   }
 
-  const clearBtn = document.querySelector(".mobile-picker-actions .action-button");
+  const clearBtn = document.querySelector(".mobile-picker-actions .action-button.secondary");
+  const doneBtn = document.getElementById("mobilePickerDone");
   if (clearBtn) {
     if (mode === "ban") clearBtn.textContent = "BANを全クリア";
     else if (mode === "alt") clearBtn.textContent = "代用をクリア";
     else clearBtn.textContent = "この枠をクリア";
+  }
+  if (doneBtn) {
+    doneBtn.style.display = mode === "ban" ? "inline-flex" : "none";
   }
 
   document.querySelectorAll("[data-mobile-tag]").forEach(btn => {
@@ -1165,6 +1222,10 @@ function openMobileChampionPicker(mode, lane) {
 }
 
 function closeMobileChampionPicker() {
+  if (mobilePickerMode === "ban") {
+    bannedChampionIds = [...mobileBanTempIds];
+    renderBanSlots();
+  }
   document.getElementById("mobilePickerModal").classList.remove("open");
   mobilePickerMode = null;
   mobilePickerLane = null;
@@ -1185,14 +1246,15 @@ function clearMobilePickerSelection() {
   if (mobilePickerMode === "main" && mobilePickerLane) {
     delete team[mobilePickerLane];
     renderTeam();
+    closeMobileChampionPicker();
   } else if (mobilePickerMode === "alt" && mobilePickerLane) {
     altPicks[mobilePickerLane] = [];
     renderAlt();
+    closeMobileChampionPicker();
   } else if (mobilePickerMode === "ban") {
-    bannedChampionIds = [];
-    renderBanSlots();
+    mobileBanTempIds = [];
+    renderMobilePickerList();
   }
-  closeMobileChampionPicker();
 }
 
 function renderMobilePickerList() {
@@ -1710,7 +1772,13 @@ function generateExportImage() {
       <h2 id="mobilePickerTitle">チャンピオン選択</h2>
       <button type="button" class="cancel-btn" onclick="closeMobileChampionPicker()">閉じる</button>
     </div>
-    <input id="mobilePickerSearch" class="search-box" placeholder="チャンピオン名で検索" oninput="renderMobilePickerList()">
+    <div class="mobile-picker-toolbar">
+      <input id="mobilePickerSearch" class="search-box" placeholder="チャンピオン名で検索" oninput="renderMobilePickerList()">
+      <select id="mobilePickerSort" class="mobile-picker-sort" onchange="renderMobilePickerList()">
+        <option value="nameAsc">名前昇順</option>
+        <option value="nameDesc">名前降順</option>
+      </select>
+    </div>
     <div class="tag-filters mobile-picker-tags">
       <button class="tag-filter active" data-mobile-tag="" onclick="setMobilePickerTagFilter('')">すべて</button>
       <button class="tag-filter" data-mobile-tag="TOP" onclick="setMobilePickerTagFilter('TOP')">TOP</button>
@@ -1721,6 +1789,7 @@ function generateExportImage() {
     </div>
     <div class="mobile-picker-actions">
       <button type="button" class="action-button secondary" onclick="clearMobilePickerSelection()">この選択をクリア</button>
+      <button type="button" id="mobilePickerDone" class="action-button" onclick="closeMobileChampionPicker()" style="display:none;">完了</button>
     </div>
     <div class="champion-list mobile-picker-list" id="mobilePickerList"></div>
   </div>
