@@ -533,6 +533,32 @@ async function saveChampion() {
 
 async function loadChampions() {
   allChampions = await getChampionList();
+
+  if (allChampions.length === 0) {
+    try {
+      const response = await fetch("champions.json", { cache: "no-store" });
+      if (response.ok) {
+        const payload = await response.json();
+        if (payload && Array.isArray(payload.champions)) {
+          allChampions = payload.champions.map(ch => ({
+            ...ch,
+            tags: Array.isArray(ch.tags) ? ch.tags : []
+          }));
+
+          if (allChampions.length > 0) {
+            try {
+              await saveManyChampions(allChampions);
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   renderList();
 }
 
