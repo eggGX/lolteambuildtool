@@ -280,6 +280,7 @@
       編集からタグ設定が可能です。<br>
       タグは TOP / JG / MID / ADC / SUP の5種類です。
     </div>
+    <div id="seedStatus" class="info-box" style="display:none;"></div>
   </div>
 
   <div class="list-area">
@@ -372,7 +373,7 @@ async function handleChampionImport(e){
     await saveManyChampions(toAdd);
 
     alert(toAdd.length + "件のチャンピオンを追加しました");
-    loadChampions();
+    initChampionPage();
   }catch(err){
     console.error(err);
     alert("インポート失敗");
@@ -382,6 +383,58 @@ async function handleChampionImport(e){
 </script>
 <script>
 let pastedImage = null;
+
+async function ensureInitialChampionSeed() {
+  const status = document.getElementById("seedStatus");
+
+  try {
+    const existing = await getChampionList();
+    if (existing.length > 0) {
+      if (status) status.style.display = "none";
+      return;
+    }
+
+    if (status) {
+      status.style.display = "block";
+      status.textContent = "初期チャンピオンデータを読み込み中...";
+    }
+
+    const response = await fetch("champions.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("champions.json の読み込みに失敗しました");
+    }
+
+    const payload = await response.json();
+    if (!payload || !Array.isArray(payload.champions)) {
+      throw new Error("champions.json の形式が不正です");
+    }
+
+    const champions = payload.champions.map(ch => ({
+      ...ch,
+      tags: Array.isArray(ch.tags) ? ch.tags : []
+    }));
+
+    if (champions.length > 0) {
+      await saveManyChampions(champions);
+    }
+
+    if (status) {
+      status.textContent = `初期チャンピオンを ${champions.length} 件読み込みました。`;
+    }
+  } catch (error) {
+    console.error(error);
+    if (status) {
+      status.style.display = "block";
+      status.textContent = "初期チャンピオンデータの読み込みに失敗しました。必要ならチャンピオンインポートを使ってください。";
+    }
+  }
+}
+
+async function initChampionPage() {
+  await ensureInitialChampionSeed();
+  await initChampionPage();
+}
+
 let allChampions = [];
 let activeTagFilter = "";
 let editingChampionId = null;
@@ -470,7 +523,7 @@ async function saveChampion() {
     document.getElementById("preview").src = "";
     pastedImage = null;
 
-    await loadChampions();
+    await initChampionPage();
   } catch (error) {
     console.error(error);
     alert("保存に失敗しました。ブラウザの保存容量を確認してください。");
@@ -526,7 +579,7 @@ function renderList() {
 async function deleteChampion(id) {
   if (!confirm("削除しますか？")) return;
   await deleteChampionData(id);
-  await loadChampions();
+  await initChampionPage();
 }
 
 async function openEditModal(id) {
@@ -575,10 +628,10 @@ async function saveEditChampion() {
 
   await saveChampionData(updated);
   closeEditModal();
-  await loadChampions();
+  await initChampionPage();
 }
 
-loadChampions();
+initChampionPage();
 
 function exportChampions() {
   getChampionList().then(list => {
@@ -624,7 +677,7 @@ async function handleChampionImport(e){
     await saveManyChampions(toAdd);
 
     alert(toAdd.length + "件のチャンピオンを追加しました");
-    loadChampions();
+    initChampionPage();
   }catch(err){
     console.error(err);
     alert("インポート失敗");

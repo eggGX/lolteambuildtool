@@ -677,6 +677,31 @@ function setTagFilter(tag) {
   renderChampionList();
 }
 
+
+async function ensureInitialChampionSeed() {
+  try {
+    const existing = await getChampionList();
+    if (existing.length > 0) return;
+
+    const response = await fetch("champions.json", { cache: "no-store" });
+    if (!response.ok) return;
+
+    const payload = await response.json();
+    if (!payload || !Array.isArray(payload.champions)) return;
+
+    const champions = payload.champions.map(ch => ({
+      ...ch,
+      tags: Array.isArray(ch.tags) ? ch.tags : []
+    }));
+
+    if (champions.length > 0) {
+      await saveManyChampions(champions);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function loadChampions() {
   champions = await getChampionList();
   renderChampionList();
@@ -829,6 +854,7 @@ async function loadEditingTeam() {
 }
 
 (async function init() {
+  await ensureInitialChampionSeed();
   await loadChampions();
   resetTeamBuilderState();
   await loadSharedTeamFromUrl();
