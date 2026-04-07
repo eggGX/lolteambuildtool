@@ -690,7 +690,7 @@ body {
 
   .modal {
     width: 100% !important;
-    max-height: 90vh !important;
+    max-height: 78vh !important;
     overflow-y: auto !important;
   }
 }
@@ -763,8 +763,8 @@ body {
   }
 
   .mobile-picker-modal {
-    width: min(680px, 100%) !important;
-    max-height: 90vh !important;
+    width: min(560px, calc(100vw - 24px)) !important;
+    max-height: 78vh !important;
     overflow-y: auto !important;
   }
 
@@ -799,6 +799,44 @@ body {
 @media (max-width: 560px) {
   .top-actions {
     grid-template-columns: 1fr !important;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .mobile-picker-modal {
+    padding: 14px !important;
+  }
+  .mobile-picker-header {
+    position: sticky;
+    top: 0;
+    background: #111827;
+    z-index: 2;
+    padding-bottom: 8px;
+  }
+  .mobile-picker-tags {
+    margin-bottom: 10px !important;
+  }
+  .mobile-picker-list {
+    max-height: 48vh;
+    overflow-y: auto;
+    align-content: start;
+    padding-right: 4px;
+  }
+  #banPanel {
+    display: none !important;
+  }
+  .alt-area {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  .alt-area img,
+  .alt-slot-empty {
+    display: block !important;
+  }
+  .lane {
+    overflow: hidden !important;
   }
 }
 
@@ -948,6 +986,7 @@ document.querySelectorAll(".lane").forEach(el => {
     if (event.target.closest(".alt-btn")) return;
     if (isMobileLayout()) {
       openMobileChampionPicker("main", el.dataset.lane);
+      updateMobileModeStatus();
       return;
     }
     clearAltMode();
@@ -1056,6 +1095,7 @@ function resetTeamBuilderState() {
   renderTeam();
   renderAlt();
   renderBanSlots();
+  renderAlt();
   refreshAltButtons();
   renderChampionList();
   updateMobileModeStatus();
@@ -1108,18 +1148,27 @@ function openMobileChampionPicker(mode, lane) {
     else if (mode === "ban") title.textContent = `BANチャンピオン選択`;
   }
 
+  const clearBtn = document.querySelector(".mobile-picker-actions .action-button");
+  if (clearBtn) {
+    if (mode === "ban") clearBtn.textContent = "BANを全クリア";
+    else if (mode === "alt") clearBtn.textContent = "代用をクリア";
+    else clearBtn.textContent = "この枠をクリア";
+  }
+
   document.querySelectorAll("[data-mobile-tag]").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.mobileTag === "");
   });
 
   renderMobilePickerList();
   document.getElementById("mobilePickerModal").classList.add("open");
+  updateMobileModeStatus();
 }
 
 function closeMobileChampionPicker() {
   document.getElementById("mobilePickerModal").classList.remove("open");
   mobilePickerMode = null;
   mobilePickerLane = null;
+  updateMobileModeStatus();
 }
 
 function setMobilePickerTagFilter(tag) {
@@ -1347,8 +1396,10 @@ function renderAlt(){
       img.title = champ.name;
       img.onclick = (event) => {
         event.stopPropagation();
-        altPicks[lane] = (altPicks[lane] || []).filter(x => x !== id);
-        renderAlt();
+        if (!isMobileLayout()) {
+          altPicks[lane] = (altPicks[lane] || []).filter(x => x !== id);
+          renderAlt();
+        }
       };
       el.appendChild(img);
     });
@@ -1421,6 +1472,7 @@ async function loadEditingTeam() {
   renderTeam();
   renderAlt();
   renderBanSlots();
+  renderAlt();
   refreshAltButtons();
   updateMobileModeStatus();
 })();
@@ -1668,7 +1720,7 @@ function generateExportImage() {
       <button class="tag-filter" data-mobile-tag="SUP" onclick="setMobilePickerTagFilter('SUP')">SUP</button>
     </div>
     <div class="mobile-picker-actions">
-      <button type="button" class="action-button secondary" onclick="clearMobilePickerSelection()">この枠をクリア</button>
+      <button type="button" class="action-button secondary" onclick="clearMobilePickerSelection()">この選択をクリア</button>
     </div>
     <div class="champion-list mobile-picker-list" id="mobilePickerList"></div>
   </div>
